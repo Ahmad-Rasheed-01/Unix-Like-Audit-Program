@@ -2,7 +2,7 @@
 
 A comprehensive collection of system audit scripts designed to gather critical system information for security assessments, compliance audits, and system documentation across different Unix-like operating systems.
 
-**Note**: While the repository is named "Linux-Audit-Utility" for historical reasons, it actually supports both Linux and Unix systems, including IBM AIX.
+**Note**: This repository is named "Unix-like-Audit-Program" because it supports both Linux and Unix systems, including IBM AIX.
 
 ## Overview
 
@@ -57,12 +57,12 @@ All scripts collect the following system information:
 
 ### Platform-Specific Requirements
 
-#### Linux Systems (Oracle_Linux.sh, SUSE_Linux.sh)
+#### Linux Systems (RedHat_Audit.sh, Oracle_Audit.sh, SUSE_Audit.sh)
 - `timeout` command (for preventing hangs)
 - `systemctl` (for service information)
 - `netstat` or `ss` (for network information)
 
-#### AIX Systems (AIX.sh)
+#### AIX Systems (AIX_Audit.sh)
 - AIX-specific commands: `lslpp`, `lsrc`, `lsgroup`
 - `ifconfig` (for network configuration)
 - `ipfw` (for firewall information)
@@ -71,34 +71,40 @@ All scripts collect the following system information:
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd Linux-Audit-Utility
+   git clone https://github.com/Ahmad-Rasheed-01/Unix-Like-Audit-Program
+   cd Unix-like-Audit-Program
    ```
 
 2. Make the scripts executable:
    ```bash
-   chmod +x Oracle_Linux.sh
-   chmod +x SUSE_Linux.sh
-   chmod +x AIX.sh
+   chmod +x RedHat_Audit.sh
+   chmod +x Oracle_Audit.sh
+   chmod +x SUSE_Audit.sh
+   chmod +x AIX_Audit.sh
    ```
 
 ## Usage
 
 ### Basic Execution
 
-1. **For Oracle Linux/RHEL/CentOS systems:**
+1. **For RedHat Linux systems:**
    ```bash
-   sudo ./Oracle_Linux.sh
+   sudo ./RedHat_Audit.sh
    ```
 
-2. **For SUSE Linux systems:**
+2. **For Oracle Linux systems:**
    ```bash
-   sudo ./SUSE_Linux.sh
+   sudo ./Oracle_Audit.sh
    ```
 
-3. **For AIX systems:**
+3. **For SUSE Linux systems:**
    ```bash
-   sudo ./AIX.sh
+   sudo ./SUSE_Audit.sh
+   ```
+
+4. **For AIX systems:**
+   ```bash
+   sudo ./AIX_Audit.sh
    ```
 
 ### Output
@@ -114,7 +120,8 @@ Each script creates:
 ```
 
 **Example outputs:**
-- `server01[192.168.1.100]20240121_143022_RPM_Oracle_Linux.tar.gz`
+- `server01[192.168.1.100]20240121_143022_RedHat_Linux.tar.gz`
+- `oracle-srv[10.0.0.25]20240121_143022_Oracle_Linux.tar.gz`
 - `suse-srv[10.0.0.50]20240121_143022_SUSE_Linux.tar.gz`
 - `aix-host[172.16.1.10]20240121_143022_AIX.tar.gz`
 

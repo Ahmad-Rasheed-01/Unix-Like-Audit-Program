@@ -31,8 +31,8 @@ This project adheres to a [Code of Conduct](CODE_OF_CONDUCT.md). By participatin
 
 1. **Fork the Repository**
    ```bash
-   git clone https://github.com/yourusername/Linux-Audit-Utility.git
-   cd Linux-Audit-Utility
+   git clone https://github.com/yourusername/Unix-like-Audit-Program.git
+   cd Unix-like-Audit-Program
    ```
 
 2. **Set Up Test Environment**
