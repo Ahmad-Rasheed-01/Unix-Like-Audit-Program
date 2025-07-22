@@ -15,3 +15,5 @@
 # Generic pattern for any hostname[ip]datetime_* folders and archives
 *[*]*_*/
 *[*]*_*.tar.gz
+
+*test*
