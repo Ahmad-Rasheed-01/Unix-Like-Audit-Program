@@ -142,7 +142,14 @@ check_os_compatibility() {
     echo -e "${CYAN}For the correct version, please visit:${NC}"
     echo -e "${BLUE}$repo_url${NC}"
     echo
-    exit 1
+    read -p "Do you want to continue anyway? (y/N): " REPLY
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo -e "${RED}Exiting script. Please use the appropriate audit script for your system.${NC}"
+        exit 1
+    fi
+    echo -e "${YELLOW}⚠ Warning: Continuing with $script_type audit on an incompatible system.${NC}"
+    echo -e "${YELLOW}⚠ Some features may not work correctly.${NC}"
+    echo
 }
 
 # Perform OS compatibility check

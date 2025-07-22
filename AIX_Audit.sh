@@ -140,7 +140,8 @@ check_os_compatibility() {
         echo -e "${RED}Exiting script. Please use the appropriate audit script for your system.${NC}"
         exit 1
     fi
-    echo
+    echo -e "${YELLOW}⚠ Warning: Continuing with $script_type audit on an incompatible system.${NC}"
+    echo -e "${YELLOW}⚠ Some features may not work correctly.${NC}"
 }
 
 # Check OS compatibility
