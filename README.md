@@ -2,7 +2,7 @@
 
 A comprehensive collection of system audit scripts designed to gather critical system information for security assessments, compliance audits, and system documentation across different Unix-like operating systems.
 
-**Note**: This repository is named "Unix-like-Audit-Program" because it supports both Linux and Unix systems, including IBM AIX.
+**Note**: This repository is named "Unix-Like-Audit-Program" because it supports both Linux and Unix systems, including IBM AIX.
 
 ## Overview
 
