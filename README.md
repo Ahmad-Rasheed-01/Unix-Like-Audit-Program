@@ -243,3 +243,6 @@ For issues, questions, or contributions, please use the repository's issue track
 ---
 
 **Disclaimer:** These scripts collect system information for audit purposes. Users are responsible for ensuring appropriate authorization before execution and secure handling of collected data.
+
+## GitHub Stats
+![Alt](https://repobeats.axiom.co/api/embed/51b6e8619eea7f94d9f36addb5ebcf85e3c7b022.svg "Repobeats analytics image")
