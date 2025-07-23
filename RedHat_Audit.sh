@@ -4,7 +4,7 @@
 ########################################################################################
 #                             USER GUIDE                                               #
 #--------------------------------------------------------------------------------------#
-# Version: 1.0.8                                                                       #
+# Version: 1.0.0                                                                       #
 # Author: Ahmad Rasheed                                                                #
 # This script collects system information and compresses it to a timestamped           #
 # tar.gz file.                                                                         #
@@ -67,7 +67,7 @@ echo -e "                                    ${GREEN}By Unix-Like Audit Program$
 echo -e "                                                                                                            "
 echo -e "                                                                                                            "
 echo -e "    ${WHITE}Platform: RHEL${CYAN}                                                                                 "
-echo -e "    ${WHITE}Version: 1.0.8${CYAN}                                                                                 "
+echo -e "    ${WHITE}Version: 1.0.0${CYAN}                                                                                 "
 echo -e "    ${WHITE}For Updates Please Visit: https://github.com/Ahmad-Rasheed-01/Unix-Like-Audit-Program${CYAN}          "
 echo -e "                                                                                                            "
 echo -e "══════════════════════════════════════════════════════════════════════════════════════════════════════════════"

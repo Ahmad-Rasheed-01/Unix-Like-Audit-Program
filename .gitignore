@@ -6,6 +6,7 @@ SUSE_*/
 RedHat_*/
 Oracle_*/
 AIX_*/
+Debian_*/
 
 # Ignore any directory with hostname and IP pattern
 *[*]*_*/
