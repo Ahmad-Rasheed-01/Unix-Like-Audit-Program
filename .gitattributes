@@ -1,16 +1,16 @@
-# Set default behavior to automatically normalize line endings
+# Normalize line endings
 * text=auto
 
-# Shell scripts should always use LF line endings
+# Shell scripts with LF endings
 *.sh text eol=lf
 
-# Exclude these files/directories from GitHub release archives
-.git* export-ignore
-.github export-ignore
+# Ignore these in GitHub release archives
+.gitignore export-ignore
+.gitattributes export-ignore
+.github/ export-ignore
 CODE_OF_CONDUCT.md export-ignore
 CONTRIBUTING.md export-ignore
 SECURITY.md export-ignore
 RELEASE.md export-ignore
 README.md export-ignore
 *.md export-ignore
-Debian_Audit.sh export-ignore
