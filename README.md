@@ -6,11 +6,13 @@ A comprehensive collection of system audit scripts designed to gather critical s
 
 ## Overview
 
-This repository contains three specialized audit scripts, each tailored for specific operating systems:
+This repository contains specialized audit scripts, each tailored for specific operating systems:
 
-- **Oracle_Linux.sh** - For RPM-based Linux systems (Oracle Linux, RHEL, CentOS, etc.)
-- **SUSE_Linux.sh** - For SUSE Linux Enterprise Server (SLES) and openSUSE systems
-- **AIX.sh** - For IBM AIX Unix systems
+- **Oracle_v1.0.0.sh** - For RPM-based Linux systems (Oracle Linux, RHEL, CentOS, etc.)
+- **RedHat_v1.0.0.sh** - For RedHat/RHEL Linux systems
+- **SUSE_v1.0.0.sh** - For SUSE Linux Enterprise Server (SLES) and openSUSE systems
+- **AIX_v1.0.0.sh** - For IBM AIX Unix systems
+- **Debian-based_v1.0.0.sh** - For Debian-based Linux systems (Debian, Ubuntu, etc.)
 
 ## Features
 
@@ -30,19 +32,31 @@ All scripts collect the following system information:
 
 ### Script-Specific Features
 
-#### Oracle_Linux.sh
+#### Oracle_v1.0.0.sh
 - RPM package management information
 - SystemD service status
 - Chrony/NTP time synchronization
 - RedHat/Oracle-specific configuration files
 
-#### SUSE_Linux.sh
+#### RedHat_v1.0.0.sh
+- RPM package management information
+- SystemD service status
+- Chrony/NTP time synchronization
+- RedHat-specific configuration files
+
+#### SUSE_v1.0.0.sh
 - Zypper package management information
 - SUSE-specific configuration files
 - SystemD service management
 - SUSE release information
 
-#### AIX.sh
+#### Debian-based_v1.0.0.sh
+- APT package management information
+- SystemD service status
+- Debian/Ubuntu-specific configuration files
+- Debian release information
+
+#### AIX_v1.0.0.sh
 - AIX-specific system commands (lslpp, lsrc, lsgroup)
 - AIX security configuration
 - AIX firewall settings (ipfw)
@@ -57,12 +71,12 @@ All scripts collect the following system information:
 
 ### Platform-Specific Requirements
 
-#### Linux Systems (RedHat_Audit.sh, Oracle_Audit.sh, SUSE_Audit.sh)
+#### Linux Systems (RedHat_v1.0.0.sh, Oracle_v1.0.0.sh, SUSE_v1.0.0.sh, Debian-based_v1.0.0.sh)
 - `timeout` command (for preventing hangs)
 - `systemctl` (for service information)
 - `netstat` or `ss` (for network information)
 
-#### AIX Systems (AIX_Audit.sh)
+#### AIX Systems (AIX_v1.0.0.sh)
 - AIX-specific commands: `lslpp`, `lsrc`, `lsgroup`
 - `ifconfig` (for network configuration)
 - `ipfw` (for firewall information)
@@ -77,10 +91,15 @@ All scripts collect the following system information:
 
 2. Make the scripts executable:
    ```bash
-   chmod +x RedHat_Audit.sh
-   chmod +x Oracle_Audit.sh
-   chmod +x SUSE_Audit.sh
-   chmod +x AIX_Audit.sh
+   # Option 1: Make each script executable individually
+   chmod +x RedHat_v1.0.0.sh
+   chmod +x Oracle_v1.0.0.sh
+   chmod +x SUSE_v1.0.0.sh
+   chmod +x Debian-based_v1.0.0.sh
+   chmod +x AIX_v1.0.0.sh
+   
+   # Option 2: Make all shell scripts executable at once
+   chmod +x *.sh
    ```
 
 ## Usage
@@ -89,22 +108,27 @@ All scripts collect the following system information:
 
 1. **For RedHat Linux systems:**
    ```bash
-   sudo ./RedHat_Audit.sh
+   sudo ./RedHat_v1.0.0.sh
    ```
 
 2. **For Oracle Linux systems:**
    ```bash
-   sudo ./Oracle_Audit.sh
+   sudo ./Oracle_v1.0.0.sh
    ```
 
 3. **For SUSE Linux systems:**
    ```bash
-   sudo ./SUSE_Audit.sh
+   sudo ./SUSE_v1.0.0.sh
    ```
 
-4. **For AIX systems:**
+4. **For Debian-based Linux systems:**
    ```bash
-   sudo ./AIX_Audit.sh
+   sudo ./Debian-based_v1.0.0.sh
+   ```
+
+5. **For AIX systems:**
+   ```bash
+   sudo ./AIX_v1.0.0.sh
    ```
 
 ### Output

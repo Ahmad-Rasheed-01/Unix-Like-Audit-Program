@@ -6,12 +6,13 @@ We're excited to announce the first official release of the Unix-Like Audit Prog
 
 ### What's Included
 
-This release includes four specialized audit scripts, each tailored for specific operating systems:
+This release includes specialized audit scripts, each tailored for specific operating systems:
 
-- **RedHat_Audit.sh** - For RPM-based Linux systems (RHEL, CentOS, Fedora, etc.)
-- **Oracle_Audit.sh** - For Oracle Linux systems
-- **SUSE_Audit.sh** - For SUSE Linux Enterprise Server (SLES) and openSUSE systems
-- **AIX_Audit.sh** - For IBM AIX Unix systems
+- **RedHat_v1.0.0.sh** - For RPM-based Linux systems (RHEL, CentOS, Fedora, etc.)
+- **Oracle_v1.0.0.sh** - For Oracle Linux systems
+- **SUSE_v1.0.0.sh** - For SUSE Linux Enterprise Server (SLES) and openSUSE systems
+- **Debian-based_v1.0.0.sh** - For Debian-based Linux systems (Debian, Ubuntu, etc.)
+- **AIX_v1.0.0.sh** - For IBM AIX Unix systems
 
 ### Key Features
 
@@ -31,10 +32,11 @@ All scripts provide:
 
 #### Script-Specific Features
 
-- **RedHat_Audit.sh**: RPM package management, SystemD service status, Chrony/NTP time synchronization
-- **Oracle_Audit.sh**: Oracle Linux specific configurations and package management
-- **SUSE_Audit.sh**: Zypper package management, SUSE-specific configuration files
-- **AIX_Audit.sh**: AIX-specific system commands (lslpp, lsrc, lsgroup), AIX security configuration
+- **RedHat_v1.0.0.sh**: RPM package management, SystemD service status, Chrony/NTP time synchronization
+- **Oracle_v1.0.0.sh**: Oracle Linux specific configurations and package management
+- **SUSE_v1.0.0.sh**: Zypper package management, SUSE-specific configuration files
+- **Debian-based_v1.0.0.sh**: APT package management, SystemD service status, Debian/Ubuntu-specific configuration files
+- **AIX_v1.0.0.sh**: AIX-specific system commands (lslpp, lsrc, lsgroup), AIX security configuration
 
 ### Output Format
 
@@ -65,15 +67,20 @@ Each script creates:
 
 2. Make the scripts executable:
    ```bash
-   chmod +x RedHat_Audit.sh Oracle_Audit.sh SUSE_Audit.sh AIX_Audit.sh
+   # Option 1: Make specific scripts executable
+   chmod +x RedHat_v1.0.0.sh Oracle_v1.0.0.sh SUSE_v1.0.0.sh Debian-based_v1.0.0.sh AIX_v1.0.0.sh
+   
+   # Option 2: Make all shell scripts executable at once
+   chmod +x *.sh
    ```
 
 3. Execute the appropriate script for your system (requires root privileges):
    ```bash
-   sudo ./RedHat_Audit.sh   # For RedHat-based systems
-   sudo ./Oracle_Audit.sh   # For Oracle Linux systems
-   sudo ./SUSE_Audit.sh     # For SUSE Linux systems
-   sudo ./AIX_Audit.sh      # For AIX systems
+   sudo ./RedHat_v1.0.0.sh       # For RedHat-based systems
+   sudo ./Oracle_v1.0.0.sh       # For Oracle Linux systems
+   sudo ./SUSE_v1.0.0.sh         # For SUSE Linux systems
+   sudo ./Debian-based_v1.0.0.sh # For Debian-based systems
+   sudo ./AIX_v1.0.0.sh          # For AIX systems
    ```
 
 ### Documentation

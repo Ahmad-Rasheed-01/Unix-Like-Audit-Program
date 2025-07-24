@@ -12,9 +12,9 @@
 # Prerequisites:                                                                       #
 # a) The script must be run as root (sudo).                                            #
 # b) Make the script executable by running:                                            #
-#      chmod +x AIX_Audit.sh                                                           #
+#      chmod +x AIX_v1.0.0.sh                                                          #
 # c) Execute the script using:                                                         #
-#      sudo ./AIX_Audit.sh                                                             #
+#      sudo ./AIX_v1.0.0.sh                                                            #
 # d) The script automatically creates a tar.gz file in the current directory.          #
 # e) Share the generated tar.gz file as needed.                                        #
 #                                                                                      # 
@@ -63,7 +63,7 @@ echo -e "    ${WHITE}██║  ██║██║██╔╝ ██╗     █
 echo -e "    ${WHITE}╚═╝  ╚═╝╚═╝╚═╝  ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝   ╚═╝${BLUE}                        "
 echo -e "                                                                                                            "
 echo -e "                 ${YELLOW}🔒 A Security Audit Utility 🔒${BLUE}                                  "
-echo -e "                    ${GREEN}By Unix-Like Audit Program${BLUE}                                     "
+echo -e "                ${GREEN}Developed under Unix-Like Audit Program${BLUE}                             "
 echo -e "                                                                                                            "
 echo -e "                                                                                                            "
 echo -e "    ${WHITE}Platform: IBM AIX${BLUE}                                                                                 "
@@ -127,10 +127,10 @@ check_os_compatibility() {
     echo -e "${RED}✗ OS Detection: $detected_os detected${NC}"
     echo -e "${RED}✗ Script Compatibility: This script is designed for $script_type systems${NC}"
     echo -e "${YELLOW}Please use the appropriate script for your operating system:${NC}"
-    echo -e "${WHITE}  • For RedHat/RHEL: RedHat_Audit.sh${NC}"
-    echo -e "${WHITE}  • For SUSE Linux: SUSE_Audit.sh${NC}"
-    echo -e "${WHITE}  • For Oracle Linux: Oracle_Audit.sh${NC}"
-    echo -e "${WHITE}  • For Debian/Ubuntu: (Check repository for availability)${NC}"
+    echo -e "${WHITE}  • For RedHat/RHEL: RedHat_v1.0.0.sh${NC}"
+    echo -e "${WHITE}  • For SUSE Linux: SUSE_v1.0.0.sh${NC}"
+    echo -e "${WHITE}  • For Oracle Linux: Oracle_v1.0.0.sh${NC}"
+    echo -e "${WHITE}  • For Debian/Ubuntu: Debian-based_v1.0.0.sh${NC}"
     echo
     echo -e "${CYAN}For the correct version, please visit:${NC}"
     echo -e "${BLUE}$repo_url${NC}"
