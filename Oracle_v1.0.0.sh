@@ -88,7 +88,13 @@ check_os_compatibility() {
                 detected_os="Oracle Linux"
                 echo -e "${GREEN}✓ OS Detection: $detected_os detected${NC}"
                 echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -97,7 +103,13 @@ check_os_compatibility() {
                 echo -e "${YELLOW}⚠ OS Detection: $detected_os detected${NC}"
                 echo -e "${YELLOW}⚠ Recommendation: Consider using RedHat_v1.0.0.sh for better compatibility${NC}"
                 echo -e "${CYAN}However, this script should work as Oracle Linux is RHEL-compatible${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -118,21 +130,39 @@ check_os_compatibility() {
         detected_os="Oracle Linux"
         echo -e "${GREEN}✓ OS Detection: $detected_os detected${NC}"
         echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-        echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+        echo
+        read -p "Do you want to continue with the collection? (Y/n): " REPLY
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            echo -e "${RED}Collection cancelled by user.${NC}"
+            exit 0
+        fi
+        echo -e "${CYAN}Continuing with $script_type collection...${NC}"
         echo
         return 0
     elif [ -f /etc/redhat-release ]; then
         detected_os="RedHat/RHEL Compatible"
         echo -e "${YELLOW}⚠ OS Detection: $detected_os detected${NC}"
         echo -e "${YELLOW}⚠ This appears to be a RHEL-compatible system${NC}"
-        echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+        echo
+        read -p "Do you want to continue with the collection? (Y/n): " REPLY
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            echo -e "${RED}Collection cancelled by user.${NC}"
+            exit 0
+        fi
+        echo -e "${CYAN}Continuing with $script_type collection...${NC}"
         echo
         return 0
     elif command -v rpm >/dev/null 2>&1; then
         detected_os="RPM-based system"
         echo -e "${YELLOW}⚠ OS Detection: $detected_os detected${NC}"
         echo -e "${YELLOW}⚠ This appears to be an RPM-based system, proceeding with caution${NC}"
-        echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+        echo
+        read -p "Do you want to continue with the collection? (Y/n): " REPLY
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            echo -e "${RED}Collection cancelled by user.${NC}"
+            exit 0
+        fi
+        echo -e "${CYAN}Continuing with $script_type collection...${NC}"
         echo
         return 0
     fi

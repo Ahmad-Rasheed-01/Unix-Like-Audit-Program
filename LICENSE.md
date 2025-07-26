@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2024 Linux Audit Utility
+Copyright (c) 2024 Unix-Like Audit Program
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

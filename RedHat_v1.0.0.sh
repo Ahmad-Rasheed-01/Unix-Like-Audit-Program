@@ -32,7 +32,7 @@
 # d) It is advised to execute the script during off-peak hours.                        #
 #                                                                                      #
 # Notes:                                                                               #
-# - This script is designed for RPM based Linux systems.                               #
+# - This script is designed for RedHat-based Linux systems (RHEL, CentOS, Fedora, etc.) #
 # - Ensure you have sufficient permissions to read system files.                       #
 # - Some commands/files may not be available depending on the OS version.              #
 # - This script is READ-ONLY and does not modify any system states or configurations.  #
@@ -88,25 +88,28 @@ check_os_compatibility() {
                 detected_os="RedHat/RHEL Compatible"
                 echo -e "${GREEN}✓ OS Detection: $detected_os detected${NC}"
                 echo -e "${GREEN}✓ Script Compatibility: This script is compatible with your system${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
-                ;;
-            "ubuntu"|"debian")
-                detected_os="Debian/Ubuntu"
-                ;;
-            "sles"|"opensuse"|"opensuse-leap"|"opensuse-tumbleweed")
-                detected_os="SUSE Linux"
-                ;;
-            "aix")
-                detected_os="AIX"
                 ;;
             "oracle")
                 detected_os="Oracle Linux"
                 echo -e "${YELLOW}⚠ OS Detection: $detected_os detected${NC}"
-                echo -e "${YELLOW}⚠ Recommendation: Consider using Oracle_Audit.sh for better compatibility${NC}"
+                echo -e "${YELLOW}⚠ Recommendation: Consider using Oracle_v1.0.0.sh for better compatibility${NC}"
                 echo -e "${CYAN}However, this script should work as Oracle Linux is RHEL-compatible${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -118,14 +121,13 @@ check_os_compatibility() {
         detected_os="RedHat/RHEL Compatible"
         echo -e "${GREEN}✓ OS Detection: $detected_os detected${NC}"
         echo -e "${GREEN}✓ Script Compatibility: This script is compatible with your system${NC}"
-        echo -e "${CYAN}Continuing with $script_type audit...${NC}"
         echo
-        return 0
-    elif command -v rpm >/dev/null 2>&1; then
-        detected_os="RPM-based system"
-        echo -e "${YELLOW}⚠ OS Detection: $detected_os detected${NC}"
-        echo -e "${YELLOW}⚠ This appears to be an RPM-based system, proceeding with caution${NC}"
-        echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+        read -p "Do you want to continue with the collection? (Y/n): " REPLY
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            echo -e "${RED}Collection cancelled by user.${NC}"
+            exit 0
+        fi
+        echo -e "${CYAN}Continuing with $script_type collection...${NC}"
         echo
         return 0
     fi
@@ -134,10 +136,10 @@ check_os_compatibility() {
     echo -e "${RED}✗ OS Detection: $detected_os detected${NC}"
     echo -e "${RED}✗ Script Compatibility: This script is designed for $script_type systems${NC}"
     echo -e "${YELLOW}Please use the appropriate script for your operating system:${NC}"
-    echo -e "${WHITE}  • For SUSE Linux: SUSE_v1.0.0.sh${NC}"
-    echo -e "${WHITE}  • For AIX: AIX_v1.0.0.sh${NC}"
     echo -e "${WHITE}  • For Oracle Linux: Oracle_v1.0.0.sh${NC}"
+    echo -e "${WHITE}  • For SUSE Linux: SUSE_v1.0.0.sh${NC}"
     echo -e "${WHITE}  • For Debian/Ubuntu: Debian-based_v1.0.0.sh${NC}"
+    echo -e "${WHITE}  • For AIX: AIX_v1.0.0.sh${NC}"
     echo
     echo -e "${CYAN}For the correct version, please visit:${NC}"
     echo -e "${BLUE}$repo_url${NC}"
@@ -152,7 +154,7 @@ check_os_compatibility() {
     echo
 }
 
-# Perform OS compatibility check
+# Check OS compatibility
 check_os_compatibility
 
 # Check if script is running as root

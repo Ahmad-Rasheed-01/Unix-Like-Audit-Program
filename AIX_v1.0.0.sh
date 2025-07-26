@@ -88,7 +88,13 @@ check_os_compatibility() {
         aix_version=$(oslevel 2>/dev/null || uname -v)
         echo -e "${GREEN}✓ OS Detection: $detected_os detected (Version: $aix_version)${NC}"
         echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-        echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+        echo
+        read -p "Do you want to continue with the collection? (Y/n): " REPLY
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            echo -e "${RED}Collection cancelled by user.${NC}"
+            exit 0
+        fi
+        echo -e "${CYAN}Continuing with $script_type collection...${NC}"
         echo
         return 0
     fi

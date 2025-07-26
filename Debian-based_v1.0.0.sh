@@ -90,7 +90,13 @@ check_os_compatibility() {
                 detected_os="Debian Linux"
                 echo -e "${GREEN}✓ OS Detection: Debian Linux detected${NC}"
                 echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                 if [[ $REPLY =~ ^[Nn]$ ]]; then
+                     echo -e "${RED}Collection cancelled by user.${NC}"
+                     exit 0
+                 fi
+                 echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -98,7 +104,13 @@ check_os_compatibility() {
                 detected_os="Ubuntu Linux"
                 echo -e "${GREEN}✓ OS Detection: Ubuntu Linux detected${NC}"
                 echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -106,7 +118,13 @@ check_os_compatibility() {
                 detected_os="Kali Linux"
                 echo -e "${GREEN}✓ OS Detection: Kali Linux detected${NC}"
                 echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -114,7 +132,13 @@ check_os_compatibility() {
                 detected_os="Linux Mint"
                 echo -e "${GREEN}✓ OS Detection: Linux Mint detected${NC}"
                 echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -122,7 +146,13 @@ check_os_compatibility() {
                 detected_os="Pop!_OS"
                 echo -e "${GREEN}✓ OS Detection: Pop!_OS detected${NC}"
                 echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -130,7 +160,13 @@ check_os_compatibility() {
                 detected_os="Elementary OS"
                 echo -e "${GREEN}✓ OS Detection: Elementary OS detected${NC}"
                 echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -152,7 +188,13 @@ check_os_compatibility() {
                     detected_os="Debian-based Linux"
                     echo -e "${GREEN}✓ OS Detection: Debian-based system detected${NC}"
                     echo -e "${GREEN}✓ Script Compatibility: This script should work with your system${NC}"
-                    echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                    echo
+                    read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                    if [[ $REPLY =~ ^[Nn]$ ]]; then
+                        echo -e "${RED}Collection cancelled by user.${NC}"
+                        exit 0
+                    fi
+                    echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                     echo
                     return 0
                 else
@@ -164,7 +206,13 @@ check_os_compatibility() {
         detected_os="Debian-based Linux"
         echo -e "${GREEN}✓ OS Detection: Debian-based system detected${NC}"
         echo -e "${GREEN}✓ Script Compatibility: This script should work with your system${NC}"
-        echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+        echo
+        read -p "Do you want to continue with the collection? (Y/n): " REPLY
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            echo -e "${RED}Collection cancelled by user.${NC}"
+            exit 0
+        fi
+        echo -e "${CYAN}Continuing with $script_type collection...${NC}"
         echo
         return 0
     elif [ -f /etc/redhat-release ]; then
@@ -191,10 +239,10 @@ check_os_compatibility() {
     echo
     read -p "Do you want to continue anyway? (y/N): " REPLY
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo -e "${RED}Exiting script. Please use the appropriate audit script for your system.${NC}"
+        echo -e "${RED}Exiting script. Please use the appropriate collection script for your system.${NC}"
         exit 1
     fi
-    echo -e "${YELLOW}⚠ Warning: Continuing with $script_type audit on an incompatible system.${NC}"
+    echo -e "${YELLOW}⚠ Warning: Continuing with $script_type collection on an incompatible system.${NC}"
     echo -e "${YELLOW}⚠ Some features may not work correctly.${NC}"
 }
 
@@ -369,7 +417,8 @@ echo "DONE." ; echo
 # Collect system update status
 echo "Collecting system update status..."
 if command -v apt &> /dev/null; then
-    apt update -qq 2>/dev/null
+    # Assume system is already updated
+    echo "Checking for available updates (without updating package lists)..."
     apt list --upgradable 2>/dev/null > "$folder_name/updates_available.txt"
 else
     echo "APT package manager not found." > "$folder_name/updates_available.txt"

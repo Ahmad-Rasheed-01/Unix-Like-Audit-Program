@@ -96,7 +96,13 @@ check_os_compatibility() {
                     echo -e "${GREEN}✓ OS Detection: SUSE-based system detected${NC}"
                 fi
                 echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-                echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+                echo
+                read -p "Do you want to continue with the collection? (Y/n): " REPLY
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo -e "${RED}Collection cancelled by user.${NC}"
+                    exit 0
+                fi
+                echo -e "${CYAN}Continuing with $script_type collection...${NC}"
                 echo
                 return 0
                 ;;
@@ -120,7 +126,13 @@ check_os_compatibility() {
         detected_os="SUSE Linux"
         echo -e "${GREEN}✓ OS Detection: SUSE Linux detected${NC}"
         echo -e "${GREEN}✓ Script Compatibility: This script is optimized for your system${NC}"
-        echo -e "${CYAN}Continuing with $script_type audit...${NC}"
+        echo
+        read -p "Do you want to continue with the collection? (Y/n): " REPLY
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            echo -e "${RED}Collection cancelled by user.${NC}"
+            exit 0
+        fi
+        echo -e "${CYAN}Continuing with $script_type collection...${NC}"
         echo
         return 0
     elif [ -f /etc/redhat-release ]; then
