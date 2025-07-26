@@ -1,7 +1,9 @@
 # Unix-Like Audit Program
 
 <div align="center">
-  <img src="assets/Logo.png" alt="Unix-Like Audit Program Logo" width="200" style="border-radius: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <picture>
+    <img src="assets/Logo.png" alt="Unix-Like Collection Program Logo" width="200" style="border-radius: 50%; border: 3px solid #e1e4e8; padding: 10px; background: white;">
+  </picture>
 </div>
 
 A comprehensive collection of system audit scripts designed to gather critical system information for security assessments, compliance audits, and system documentation across different Unix-like operating systems.
