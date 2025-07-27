@@ -4,7 +4,7 @@
 ########################################################################################
 #                             USER GUIDE                                               #
 #--------------------------------------------------------------------------------------#
-# Version: 1.0.0                                                                       #
+# Version: 1.0.4                                                                       #
 # Author: Ahmad Rasheed                                                                #
 # This script collects system information and compresses it to a timestamped           #
 # tar.gz file.                                                                         #
@@ -12,9 +12,9 @@
 # Prerequisites:                                                                       #
 # a) The script must be run as root (sudo).                                            #
 # b) Make the script executable by running:                                            #
-#      chmod +x Debian-based_v1.0.0.sh                                                 #
+#      chmod +x Debian-based.sh                                                        #
 # c) Execute the script using:                                                         #
-#      sudo ./Debian-based_v1.0.0.sh                                                   #
+#      sudo ./Debian-based.sh                                                          #
 # d) The script automatically creates a tar.gz file in the current directory.          #
 # e) Share the generated tar.gz file as needed.                                        #
 #                                                                                      # 
@@ -67,12 +67,115 @@ echo -e "                                ${GREEN}Developed under Unix-Like Audit
 echo -e "                                                                                                            "
 echo -e "                                                                                                            "
 echo -e "    ${WHITE}Platform: Debian-based${BLUE}                                                                            "
-echo -e "    ${WHITE}Version: 1.0.0${BLUE}                                                                                 "
+echo -e "    ${WHITE}Version: 1.0.4${BLUE}                                                                                 "
 echo -e "    ${WHITE}For Updates Please Visit: https://github.com/Ahmad-Rasheed-01/Unix-Like-Audit-Program${BLUE}          "
 echo -e "                                                                                                            "
 echo -e "══════════════════════════════════════════════════════════════════════════════════════════════════════════════"
 echo -e "${NC}"
 echo
+
+# Function to calculate file hashes
+calculate_file_hashes() {
+    local folder_path="$1"
+    local hash_file="$folder_path/file_hashes.txt"
+    
+    echo -e "${CYAN}Calculating file hashes for all collected files...${NC}"
+    
+    # Verify folder exists
+    if [ ! -d "$folder_path" ]; then
+        echo -e "${RED}Collection folder does not exist: $folder_path${NC}"
+        return 1
+    fi
+    
+    # Create hash file header
+    {
+        echo "File Hash Verification Report"
+        echo "============================="
+        echo "Generated on: $(date)"
+        echo "Collection Folder: $folder_path"
+        echo "Hash Algorithm: SHA256"
+        echo ""
+        echo "Format: [HASH] [FILENAME]"
+        echo "======================================"
+        echo ""
+    } > "$hash_file"
+    
+    # Verify hash file was created
+    if [ ! -f "$hash_file" ]; then
+        echo -e "${RED}Failed to create hash file: $hash_file${NC}"
+        return 1
+    fi
+    
+    # Count files before processing
+    local file_count=$(find "$folder_path" -type f ! -name "file_hashes.txt" | wc -l)
+    echo -e "${CYAN}Found $file_count files to process...${NC}"
+    
+    # Determine which hash tool to use and set command
+    local hash_cmd=""
+    local hash_name=""
+    local log_level="info"
+    
+    if command -v sha256sum >/dev/null 2>&1; then
+        hash_cmd="sha256sum"
+        hash_name="SHA256"
+    elif command -v shasum >/dev/null 2>&1; then
+        hash_cmd="shasum -a 256"
+        hash_name="shasum (SHA256)"
+    elif command -v md5sum >/dev/null 2>&1; then
+        hash_cmd="md5sum"
+        hash_name="MD5"
+        log_level="warn"
+        echo "Note: Using MD5 (SHA256 not available)" >> "$hash_file"
+    else
+        echo "Error: No hash calculation tool available (sha256sum, shasum, or md5sum)" >> "$hash_file"
+        echo -e "${RED}No hash calculation tool available${NC}"
+        return 1
+    fi
+    
+    # Calculate hashes for all files using the selected tool
+    if [ "$log_level" = "warn" ]; then
+        echo -e "${YELLOW}Using $hash_name algorithm (SHA256 not available)...${NC}"
+    else
+        echo -e "${CYAN}Using $hash_name algorithm...${NC}"
+    fi
+    
+    find "$folder_path" -type f ! -name "file_hashes.txt" -print0 | while IFS= read -r -d '' file; do
+        $hash_cmd "$file" 2>/dev/null || echo "ERROR: Failed to hash $file"
+    done >> "$hash_file"
+    
+    if [ "$log_level" = "warn" ]; then
+        echo -e "${YELLOW}File hashes calculated using $hash_name (SHA256 not available)${NC}"
+    else
+        echo -e "${GREEN}File hashes calculated using $hash_name${NC}"
+    fi
+    
+    # Force file system sync to ensure data is written
+    sync
+    
+    # Add summary information
+    {
+        echo ""
+        echo "======================================"
+        echo "Hash Calculation Summary:"
+        echo "Total files processed: $file_count"
+        echo "Hash file location: $hash_file"
+        echo "Hash file size: $(ls -lh "$hash_file" | awk '{print $5}')"
+        echo "Calculation completed: $(date)"
+    } >> "$hash_file"
+    
+    # Final sync to ensure all data is written
+    sync
+    
+    # Verify hash file exists and has content
+    if [ -f "$hash_file" ] && [ -s "$hash_file" ]; then
+        echo -e "${GREEN}Hash file size: $(ls -lh "$hash_file" | awk '{print $5}')${NC}"
+        echo "DONE." ; echo
+        return 0
+    else
+        echo -e "${RED}Hash file is missing or empty${NC}"
+        return 1
+    fi
+}
 
 # Function to check OS compatibility
 check_os_compatibility() {
@@ -229,10 +332,10 @@ check_os_compatibility() {
     echo -e "${RED}✗ OS Detection: $detected_os detected${NC}"
     echo -e "${RED}✗ Script Compatibility: This script is designed for $script_type systems${NC}"
     echo -e "${YELLOW}Please use the appropriate script for your operating system:${NC}"
-    echo -e "${WHITE}  • For RedHat/RHEL: RedHat_v1.0.0.sh${NC}"
-    echo -e "${WHITE}  • For SUSE Linux: SUSE_v1.0.0.sh${NC}"
-    echo -e "${WHITE}  • For Oracle Linux: Oracle_v1.0.0.sh${NC}"
-    echo -e "${WHITE}  • For AIX: AIX_v1.0.0.sh${NC}"
+    echo -e "${WHITE}  • For RedHat/RHEL: RedHat.sh${NC}"
+    echo -e "${WHITE}  • For SUSE Linux: SUSE.sh${NC}"
+    echo -e "${WHITE}  • For Oracle Linux: Oracle.sh${NC}"
+    echo -e "${WHITE}  • For AIX: AIX.sh${NC}"
     echo
     echo -e "${CYAN}For the correct version, please visit:${NC}"
     echo -e "${BLUE}$repo_url${NC}"
@@ -425,11 +528,36 @@ else
 fi
 echo "DONE." ; echo
 
+# Calculate file hashes for integrity verification
+if calculate_file_hashes "$folder_name"; then
+    echo -e "${GREEN}✓ File hash calculation completed successfully${NC}"
+    # Small delay to ensure file system operations are complete
+    sleep 1
+    # Verify hash file is included in the collection
+    if [ -f "$folder_name/file_hashes.txt" ]; then
+        echo -e "${GREEN}✓ Hash file verified in collection folder${NC}"
+    else
+        echo -e "${RED}✗ Warning: Hash file not found in collection folder${NC}"
+    fi
+else
+    echo -e "${RED}✗ File hash calculation failed${NC}"
+fi
+echo
+
 # Create tar file
 tar_file="${folder_name}.tar.gz"
 echo "Creating tar file: $tar_file"
 tar -czvf "$tar_file" "$folder_name" >/dev/null
-echo "DONE." ; echo
+echo "DONE."
+
+# Verify hash file is included in the tar archive
+echo "Verifying hash file inclusion in tar archive..."
+if tar -tzf "$tar_file" | grep -q "file_hashes.txt"; then
+    echo -e "${GREEN}✓ Hash file successfully included in tar archive${NC}"
+else
+    echo -e "${RED}✗ Warning: Hash file not found in tar archive${NC}"
+fi
+echo
 
 echo -e "${GREEN}Script execution completed. All files and outputs are saved in ${NC}${BLUE}$tar_file${NC}${GREEN}.${NC}"
 echo -e "${CYAN}The tar file (${tar_file}) is ready to be copied to secure storage.${NC}"

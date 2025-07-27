@@ -8,11 +8,11 @@ We're excited to announce the first official release of the Unix-Like Audit Prog
 
 This release includes specialized audit scripts, each tailored for specific operating systems:
 
-- **RedHat_v1.0.0.sh** - For RPM-based Linux systems (RHEL, CentOS, Fedora, etc.)
-- **Oracle_v1.0.0.sh** - For Oracle Linux systems
-- **SUSE_v1.0.0.sh** - For SUSE Linux Enterprise Server (SLES) and openSUSE systems
-- **Debian-based_v1.0.0.sh** - For Debian-based Linux systems (Debian, Ubuntu, etc.)
-- **AIX_v1.0.0.sh** - For IBM AIX Unix systems
+- **Oracle.sh** - For RPM-based Linux systems (Oracle Linux, RHEL, CentOS, etc.)
+- **RedHat.sh** - For RedHat/RHEL Linux systems
+- **SUSE.sh** - For SUSE Linux Enterprise Server (SLES) and openSUSE systems
+- **AIX.sh** - For IBM AIX Unix systems
+- **Debian-based.sh** - For Debian-based Linux systems (Debian, Ubuntu, etc.)
 
 ### Key Features
 
