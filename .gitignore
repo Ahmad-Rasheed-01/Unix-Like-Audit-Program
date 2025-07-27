@@ -18,6 +18,7 @@ Debian_*/
 # Generic pattern for any hostname[ip]datetime_* folders and archives
 *[*]*_*/
 *[*]*_*.tar.gz
+*[*]*_*.tar.gz.hash
 
 *test*
 
