@@ -287,7 +287,7 @@ calculate_file_hashes() {
         log_info "File hashes calculated using $hash_name"
     fi
     
-    # Wait for file operations to complete (replacing sync to avoid system state modification)
+    # Wait for file operations to complete
     sleep 2
     
     # Add summary information
