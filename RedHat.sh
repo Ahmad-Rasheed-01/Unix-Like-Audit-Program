@@ -1,45 +1,56 @@
 #!/bin/bash
 
 
-########################################################################################
-#                             USER GUIDE                                               #
-#--------------------------------------------------------------------------------------#
-# Version: 1.0.4                                                                       #
-# Author: Ahmad Rasheed                                                                #
-# This script collects system information and compresses it to a timestamped           #
-# tar.gz file.                                                                         #
-#                                                                                      #
-# Prerequisites:                                                                       #
-# a) The script must be run as root (sudo).                                            #
-# b) Make the script executable by running:                                            #
-#      chmod +x RedHat.sh                                                              #
-# c) Execute the script using:                                                         #
-#      sudo ./RedHat.sh                                                                #
-# d) The script automatically creates a tar.gz file in the current directory.          #
-# e) Share the generated tar.gz file as needed.                                        #
-#                                                                                      # 
-#                                                                                      #
-#--------------------------------------------------------------------------------------#
-#                       Operational Instructions                                       #
-#--------------------------------------------------------------------------------------#
-# a) Scrutinize the contents of the script to ensure that it does not contain          #
-#    any statements, commands or any other code that might negatively influence        #
-#    the environment(s) in either a security or operational way.                       #
-# b) Test the script on the test environment to ensure that it does not contain        #
-#    any statements, commands or any other code that might negatively influence        #
-#    the environment(s) in either a security or operational way.                       #
-# c) The final responsibility for executing this script lies with the executor.        #
-# d) It is advised to execute the script during off-peak hours.                        #
-#                                                                                      #
-# Notes:                                                                               #
+#########################################################################################
+#                             USER GUIDE                                                #
+#---------------------------------------------------------------------------------------#
+# Version: 1.0.5                                                                        #
+# Author: Ahmad Rasheed                                                                 #
+# This script collects system information and compresses it to a timestamped            #
+# tar.gz file.                                                                          #
+#                                                                                       #
+# Prerequisites:                                                                        #
+# a) The script must be run as root (sudo).                                             #
+# b) Make the script executable by running:                                             #
+#      chmod +x RedHat.sh                                                               #
+# c) Execute the script using:                                                          #
+#      sudo ./RedHat.sh                                                                 #
+# d) The script automatically creates a tar.gz file in the current directory.           #
+# e) Share the generated tar.gz file as needed.                                         #
+#                                                                                       # 
+#                                                                                       #
+#---------------------------------------------------------------------------------------#
+#                       Operational Instructions                                        #
+#---------------------------------------------------------------------------------------#
+# a) Scrutinize the contents of the script to ensure that it does not contain           #
+#    any statements, commands or any other code that might negatively influence         #
+#    the environment(s) in either a security or operational way.                        #
+# b) Test the script on the test environment to ensure that it does not contain         #
+#    any statements, commands or any other code that might negatively influence         #
+#    the environment(s) in either a security or operational way.                        #
+# c) The final responsibility for executing this script lies with the executor.         #
+# d) It is advised to execute the script during off-peak hours.                         #
+#                                                                                       #
+# Notes:                                                                                #
 # - This script is designed for RedHat-based Linux systems (RHEL, CentOS, Fedora, etc.) #
-# - Ensure you have sufficient permissions to read system files.                       #
-# - Some commands/files may not be available depending on the OS version.              #
-# - This script is READ-ONLY and does not modify any system states or configurations.  #
-# - For updates, visit: https://github.com/Ahmad-Rasheed-01/Unix-like-Audit-Program    #
-#                                                                                      #
-########################################################################################
+# - Ensure you have sufficient permissions to read system files.                        #
+# - Some commands/files may not be available depending on the OS version.               #
+# - This script is READ-ONLY and does not modify any system states or configurations.   #
+# - For updates, visit: https://github.com/Ahmad-Rasheed-01/Unix-like-Audit-Program     #
+#                                                                                       #
+#########################################################################################
 
+#########################################################################################
+#                                   CHANGE LOG                                          #
+#---------------------------------------------------------------------------------------#
+#  Date      | Version | Author        | Description                                    #
+#---------------------------------------------------------------------------------------#
+# 2026-01-02 | 1.0.5   | Ahmad Rasheed | - Fixed logging errors (missing functions)     #
+#            |         |               | - Added log storage functionality              #
+#            |         |               | - Fixed password_change.txt blank file issue   # 
+#            |         |               | - Added missing files tracking                 #
+#---------------------------------------------------------------------------------------#
+#########################################################################################
 
 # color codes
 RED='\033[0;31m'
@@ -67,12 +78,50 @@ echo -e "                                ${GREEN}Developed under Unix-Like Audit
 echo -e "                                                                                                            "
 echo -e "                                                                                                            "
 echo -e "    ${WHITE}Platform: RedHat${CYAN}                                                                                 "
-echo -e "    ${WHITE}Version: 1.0.4${CYAN}                                                                                 "
+echo -e "    ${WHITE}Version: 1.0.5${CYAN}                                                                                 "
 echo -e "    ${WHITE}For Updates Please Visit: https://github.com/Ahmad-Rasheed-01/Unix-Like-Audit-Program${CYAN}          "
 echo -e "                                                                                                            "
 echo -e "══════════════════════════════════════════════════════════════════════════════════════════════════════════════"
 echo -e "${NC}"
 echo
+
+# Logging functions
+LOG_FILE=""
+
+log_to_file() {
+    if [ -n "$LOG_FILE" ]; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') $1" >> "$LOG_FILE"
+    fi
+}
+
+log_info() {
+    echo -e "${GREEN}[INFO] $1${NC}"
+    log_to_file "[INFO] $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN] $1${NC}"
+    log_to_file "[WARN] $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR] $1${NC}" >&2
+    log_to_file "[ERROR] $1"
+}
+
+log_file_operation() {
+    local operation="$1"
+    local file="$2"
+    local status="$3"
+    
+    if [ "$status" = "success" ]; then
+        echo -e "${GREEN}✓ $operation: $file${NC}"
+        log_to_file "[SUCCESS] $operation: $file"
+    else
+        echo -e "${RED}✗ $operation: $file${NC}"
+        log_to_file "[FAILURE] $operation: $file"
+    fi
+}
 
 # Function to detect OS and validate script compatibility
 check_os_compatibility() {
@@ -238,8 +287,8 @@ calculate_file_hashes() {
         log_info "File hashes calculated using $hash_name"
     fi
     
-    # Force file system sync to ensure data is written
-    sync
+    # Wait for file operations to complete (replacing sync to avoid system state modification)
+    sleep 2
     
     # Add summary information
     {
@@ -252,8 +301,8 @@ calculate_file_hashes() {
         echo "Calculation completed: $(date)"
     } >> "$hash_file"
     
-    # Final sync to ensure all data is written
-    sync
+    # Wait for file operations to complete
+    sleep 2
     
     # Verify hash file exists and has content
     if [ -f "$hash_file" ] && [ -s "$hash_file" ]; then
@@ -267,7 +316,7 @@ calculate_file_hashes() {
 }
 
 # Getting hostname, IP address, and current date-time
-echo ; echo "Obtaining system hostname, IP address, and current date-time"
+echo ; log_info "Obtaining System Information and current date-time"
 hostname=$(hostname)
 ip_address=$(hostname -I | awk '{print $1}')
 datetime=$(date +"%Y%m%d_%H%M%S")
@@ -275,67 +324,115 @@ echo
 
 # Create the folder name and directory
 folder_name="RedHat_${hostname}[${ip_address}]${datetime}"
-echo "Creating folder: $folder_name"
+log_info "Creating folder: $folder_name"
 mkdir -p "$folder_name"
+
+# Initialize log file
+LOG_FILE="$folder_name/execution.log"
+log_info "Log file initialized at: $LOG_FILE"
+
 echo "DONE." ; echo
 
 # Copy the specified files to the folder
-echo "Copying system configuration files..."
-cp /etc/passwd /etc/group /etc/login.defs /etc/sudoers /etc/shadow /etc/hosts /etc/resolv.conf /etc/os-release "$folder_name" 2>/dev/null
-cp /etc/pam.d/system-auth /etc/pam.d/password-auth /etc/security/pwquality.conf "$folder_name" 2>/dev/null
-cp /etc/audit/auditd.conf /etc/audit/rules.d/audit.rules "$folder_name" 2>/dev/null
-#cp -r /etc/cron.d*
+log_info "Copying system configuration files..."
+files_to_copy=(
+    "/etc/passwd"
+    "/etc/group"
+    "/etc/login.defs"
+    "/etc/sudoers"
+    "/etc/shadow"
+    "/etc/hosts"
+    "/etc/resolv.conf"
+    "/etc/os-release"
+    "/etc/pam.d/system-auth"
+    "/etc/pam.d/password-auth"
+    "/etc/security/pwquality.conf"
+    "/etc/audit/auditd.conf"
+    "/etc/audit/rules.d/audit.rules"
+)
+
+for file in "${files_to_copy[@]}"; do
+    if [ -f "$file" ]; then
+        cp "$file" "$folder_name/" 2>/dev/null
+    else
+        echo "$file" >> "$folder_name/missing_files.txt"
+        log_warn "Missing file: $file (logged to missing_files.txt)"
+    fi
+done
 echo "DONE." ; echo
 
 # Get password change details of all users
-echo "Collecting password change status for all users..."
-for user in $(cut -d: -f1 /etc/passwd); do passwd -S "$user"; done > "$folder_name/password_change.txt"
+log_info "Collecting password change status for all users..."
+if passwd -S -a > "$folder_name/password_change.txt" 2>/dev/null; then
+    log_info "Used 'passwd -S -a' for collection."
+else
+    # Fallback to loop if -a option is not supported
+    > "$folder_name/password_change.txt"
+    while IFS=: read -r user _ ; do
+        passwd -S "$user" >> "$folder_name/password_change.txt" 2>&1
+    done < /etc/passwd
+fi
 echo "DONE." ; echo
 
 # Collect log file hierarchy
-echo "Collecting log file hierarchy from /var/log..."
+log_info "Collecting log file hierarchy from /var/log..."
 ls -lR /var/log > "$folder_name/file_hierarchy.txt"
 echo "DONE." ; echo
 
-echo "Collecting login information..."
+log_info "Collecting login information..."
 lslogins > "$folder_name/logins.txt"
 w > "$folder_name/who.txt"
 #timedatectl status | grep "NTP synchronized" > "$folder_name/ntp_sync_status.txt"
 # crontab -l > "$folder_name/cronjobs.txt" 2>/dev/null || echo "No crontab found" > "$folder_name/cronjobs.txt"
 echo "DONE." ; echo
 
-echo "Collecting ping results..."
-ping -c 4 "$(hostname)" > "$folder_name/ping_hostname.txt"
-ping -c 4 8.8.8.8 > "$folder_name/ping_google.txt"
+log_info "Collecting ping results..."
+
+# Ping Hostname
+log_info "Pinging hostname..."
+if ping -c 4 "$(hostname)" > "$folder_name/ping_hostname.txt" 2>&1; then
+    log_info "✓ Ping to hostname successful"
+else
+    log_warn "✗ Ping to hostname failed"
+fi
+
+# Ping 8.8.8.8
+log_info "Pinging 8.8.8.8"
+if ping -c 4 8.8.8.8 > "$folder_name/ping_google.txt" 2>&1; then
+    log_info "✓ Ping to 8.8.8.8 successful"
+else
+    log_warn "✗ Ping to 8.8.8.8 failed (Network might be unreachable)"
+fi
 echo "DONE." ; echo
 
-echo "Collecting applied patches detail..."
+log_info "Collecting applied patches detail..."
 rpm -qai > "$folder_name/patches.txt" 2>/dev/null || echo "RPM not available on this system" > "$folder_name/patches.txt"
 echo "DONE." ; echo
 
-echo "Collecting network port details..."
+log_info "Collecting network port details..."
 netstat -tuln > "$folder_name/network_ports.txt" 2>/dev/null || ss -tuln > "$folder_name/network_ports.txt"
 echo "DONE." ; echo
 
 # Collect running processes and services
-echo "Collecting running processes and service status..."
+log_info "Collecting running processes and service status..."
 systemctl list-units --type=service --all > "$folder_name/services_status.txt"
 ps -ef > "$folder_name/processes.txt"
 echo "DONE." ; echo
 
 # Check NTP sync status
-echo "Collecting NTP sync details..."
+log_info "Collecting NTP sync details..."
 if command -v chronyc &> /dev/null; then
     chronyc tracking > "$folder_name/ntp_sync_status.txt"
 elif command -v ntpq &> /dev/null; then
     ntpq -p > "$folder_name/ntp_sync_status.txt"
 else
     echo "NTP sync status check failed: Neither chronyc nor ntpq is available." > "$folder_name/ntp_sync_status.txt"
+    log_warn "NTP sync status check failed: Neither chronyc nor ntpq is available."
 fi
 echo "DONE." ; echo
 
 # Check cron jobs
-echo "Collecting cron jobs information..."
+log_info "Collecting cron jobs information..."
 {
     echo "System-wide cron jobs (/etc/crontab):"
     echo "------------------------------------"
@@ -369,7 +466,7 @@ echo "Collecting cron jobs information..."
 echo "DONE." ; echo
 
 # Collect user home directory information
-echo "Collecting user home directory information..."
+log_info "Collecting user home directory information..."
 {
     echo "User Home Directory Information"
     echo "==============================="
@@ -421,23 +518,24 @@ fi
 
 # Create tar file
 tar_file="${folder_name}.tar.gz"
-echo "Creating tar file: $tar_file"
+log_info "Creating tar file: $tar_file"
 if tar -czvf "$tar_file" "$folder_name" >/dev/null; then
-    echo "Tar file created successfully."
+    log_info "Tar file created successfully."
     
     # Verify hash file is included in the tar archive
-    echo "Verifying hash file inclusion in tar archive..."
+    log_info "Verifying hash file inclusion in tar archive..."
     if tar -tzf "$tar_file" | grep -q "file_hashes.txt"; then
-        echo "✓ Hash file successfully included in tar archive"
+        log_info "✓ Hash file successfully included in tar archive"
     else
-        echo "✗ Warning: Hash file not found in tar archive"
+        log_warn "✗ Warning: Hash file not found in tar archive"
     fi
 else
-    echo "Failed to create tar file"
+    log_error "Failed to create tar file"
     exit 1
 fi
-echo "DONE." ; echo
+echo
 
 echo -e "${GREEN}Script execution completed. All files and outputs are saved in ${NC}${BLUE}$tar_file${NC}${GREEN}.${NC}"
+log_info "Script execution completed. All files and outputs are saved in $tar_file."
 echo -e "${CYAN}The tar file (${tar_file}) is ready to be copied to secure storage.${NC}"
 
