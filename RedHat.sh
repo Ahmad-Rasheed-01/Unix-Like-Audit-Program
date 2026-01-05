@@ -396,12 +396,12 @@ else
     log_warn "✗ Ping to hostname failed"
 fi
 
-# Ping 8.8.8.8
-log_info "Pinging 8.8.8.8"
-if ping -c 4 8.8.8.8 > "$folder_name/ping_google.txt" 2>&1; then
-    log_info "✓ Ping to 8.8.8.8 successful"
+# Check internet connectivity
+log_info "Checking internet connection..."
+if ping -c 4 8.8.8.8 > "$folder_name/connectivity_check.txt" 2>&1; then
+    log_info "✓ Ping successful"
 else
-    log_warn "✗ Ping to 8.8.8.8 failed (Network might be unreachable)"
+    log_warn "✗ Ping failed (Network might be unreachable)"
 fi
 echo "DONE." ; echo
 
