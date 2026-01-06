@@ -385,6 +385,7 @@ files_to_copy=(
     "/etc/security/pwquality.conf"
     "/etc/audit/auditd.conf"
     "/etc/audit/rules.d/audit.rules"
+    "/etc/security/limits.conf"
 )
 
 for file in "${files_to_copy[@]}"; do
@@ -395,6 +396,14 @@ for file in "${files_to_copy[@]}"; do
         log_warn "Missing file: $file (logged to missing_files.txt)"
     fi
 done
+
+# Collect sudoers.d directory
+if [ -d "/etc/sudoers.d" ]; then
+    log_info "Copying /etc/sudoers.d directory..."
+    cp -r "/etc/sudoers.d" "$folder_name/" 2>/dev/null
+else
+    log_warn "Directory /etc/sudoers.d not found"
+fi
 echo "DONE." ; echo
 
 # Get password change details of all users
