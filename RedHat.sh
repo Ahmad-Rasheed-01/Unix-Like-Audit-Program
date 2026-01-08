@@ -315,7 +315,7 @@ calculate_file_hashes() {
     fi
 }
 
-# Getting hostname, IP address, and current date-time
+# Getting system details and current date-time
 echo ; log_info "Obtaining System Information and current date-time"
 hostname=$(hostname)
 ip_address=$(hostname -I | awk '{print $1}')
@@ -342,14 +342,14 @@ files_to_copy=(
     "/etc/sudoers"
     "/etc/shadow"
     "/etc/hosts"
-    "/etc/resolv.conf"
+    "/etc/resolv.conf"                # DNS configuration
     "/etc/os-release"
-    "/etc/pam.d/system-auth"
-    "/etc/pam.d/password-auth"
-    "/etc/security/pwquality.conf"
-    "/etc/audit/auditd.conf"
-    "/etc/audit/rules.d/audit.rules"
-    "/etc/security/limits.conf"
+    "/etc/pam.d/system-auth"          # System-wide PAM authentication
+    "/etc/pam.d/password-auth"        # Password service PAM authentication
+    "/etc/security/pwquality.conf"    # Password quality requirements
+    "/etc/audit/auditd.conf"          # Audit daemon configuration
+    "/etc/audit/rules.d/audit.rules"  # Audit rules
+    "/etc/security/limits.conf"       # System resource limits
 )
 
 for file in "${files_to_copy[@]}"; do
@@ -391,8 +391,6 @@ echo "DONE." ; echo
 log_info "Collecting login information..."
 lslogins > "$folder_name/logins.txt"
 w > "$folder_name/who.txt"
-#timedatectl status | grep "NTP synchronized" > "$folder_name/ntp_sync_status.txt"
-# crontab -l > "$folder_name/cronjobs.txt" 2>/dev/null || echo "No crontab found" > "$folder_name/cronjobs.txt"
 echo "DONE." ; echo
 
 log_info "Collecting ping results..."

@@ -378,14 +378,14 @@ files_to_copy=(
     "/etc/sudoers"
     "/etc/shadow"
     "/etc/hosts"
-    "/etc/resolv.conf"
-    "/etc/os-release"
-    "/etc/pam.d/system-auth"
-    "/etc/pam.d/password-auth"
-    "/etc/security/pwquality.conf"
-    "/etc/audit/auditd.conf"
-    "/etc/audit/rules.d/audit.rules"
-    "/etc/security/limits.conf"
+    "/etc/resolv.conf"              # DNS configuration
+    "/etc/os-release"               # OS identification data
+    "/etc/pam.d/system-auth"        # System-wide PAM authentication
+    "/etc/pam.d/password-auth"      # Password service PAM authentication
+    "/etc/security/pwquality.conf"  # Password quality requirements
+    "/etc/audit/auditd.conf"        # Audit daemon configuration
+    "/etc/audit/rules.d/audit.rules" # Audit rules
+    "/etc/security/limits.conf"     # System resource limits
 )
 
 for file in "${files_to_copy[@]}"; do
