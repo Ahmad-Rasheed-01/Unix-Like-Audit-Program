@@ -353,6 +353,19 @@ echo "DONE." ; echo
 # Get password change details of all users
 log_info "Collecting password change status for all users..."
 passwd -sa > "$folder_name/password_change.txt" 2>/dev/null
+
+log_info "Collecting detailed password aging from /etc/shadow..."
+{
+    echo "USER                 LAST_CHANGE_DATE                MIN   MAX   WARN  INACT EXPIRE"
+    nawk -F: '{ 
+        if ($3 ~ /^[0-9]+$/) { 
+            cmd = "perl -le \"print scalar localtime(" $3 "*86400)\""; 
+            cmd | getline last_changed; 
+            close(cmd); 
+            printf "%-20s %-30s %-5s %-5s %-5s %-5s %-5s\n", $1, last_changed, $4, $5, $6, $7, $8; 
+        } 
+    }' /etc/shadow
+} > "$folder_name/password_aging_detailed.txt"
 echo "DONE." ; echo
 
 # Collect log file hierarchy
