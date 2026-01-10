@@ -31,7 +31,7 @@ This project adheres to a [Code of Conduct](CODE_OF_CONDUCT.md). By participatin
 
 1. **Fork the Repository**
    ```bash
-   git clone https://github.com/yourusername/Unix-like-Audit-Program.git
+   git clone https://github.com/Ahmad-Rasheed-01/Unix-Like-Audit-Program.git
    cd Unix-like-Audit-Program
    ```
 
