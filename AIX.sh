@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 ########################################################################################
 #                             USER GUIDE                                               #
 #--------------------------------------------------------------------------------------#
-# Version: 1.0.4                                                                       #
+# Version: 1.0.5                                                                       #
 # Author: Ahmad Rasheed                                                                #
 # This script collects system information and compresses it to a timestamped           #
 # tar.gz file.                                                                         #
@@ -40,6 +40,18 @@
 #                                                                                      #
 ########################################################################################
 
+########################################################################################
+#                                   CHANGE LOG                                         #
+#--------------------------------------------------------------------------------------#
+#  Date      | Version | Author        | Description                                   #
+#--------------------------------------------------------------------------------------#
+# 2026-01-09 | 1.0.5   | Ahmad Rasheed | - Added logging functionality (console & file)#
+#            |         |               | - Fixed loop logic                            #
+#            |         |               | - Improved file hash calculation logging      #
+#            |         |               | - Standardized output format                  #
+#--------------------------------------------------------------------------------------#
+########################################################################################
+
 
 # color codes
 RED='\033[0;31m'
@@ -67,12 +79,51 @@ echo -e "                ${GREEN}Developed under Unix-Like Audit Program${BLUE} 
 echo -e "                                                                                                            "
 echo -e "                                                                                                            "
 echo -e "    ${WHITE}Platform: IBM AIX${BLUE}                                                                                 "
-echo -e "    ${WHITE}Version: 1.0.4${BLUE}                                                                                 "
+echo -e "    ${WHITE}Version: 1.0.5${BLUE}                                                                                 "
 echo -e "    ${WHITE}For Updates Please Visit: https://github.com/Ahmad-Rasheed-01/Unix-like-Audit-Program${BLUE}          "
 echo -e "                                                                                                            "
 echo -e "════════════════════════════════════════════════════════════════════════════════════════════════════════════"
 echo -e "${NC}"
 echo
+echo
+
+# Logging functions
+LOG_FILE=""
+
+log_to_file() {
+    if [ -n "$LOG_FILE" ]; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') $1" >> "$LOG_FILE"
+    fi
+}
+
+log_info() {
+    echo -e "${GREEN}[INFO] $1${NC}"
+    log_to_file "[INFO] $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN] $1${NC}"
+    log_to_file "[WARN] $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR] $1${NC}" >&2
+    log_to_file "[ERROR] $1"
+}
+
+log_file_operation() {
+    local operation="$1"
+    local file="$2"
+    local status="$3"
+    
+    if [ "$status" = "success" ]; then
+        echo -e "${GREEN}✓ $operation: $file${NC}"
+        log_to_file "[SUCCESS] $operation: $file"
+    else
+        echo -e "${RED}✗ $operation: $file${NC}"
+        log_to_file "[FAILURE] $operation: $file"
+    fi
+}
 
 # Function to check OS compatibility
 check_os_compatibility() {
@@ -164,11 +215,11 @@ calculate_file_hashes() {
     local folder_path="$1"
     local hash_file="$folder_path/file_hashes.txt"
     
-    echo "Calculating file hashes for all collected files..."
+    log_info "Calculating file hashes for all collected files..."
     
     # Verify folder exists
     if [ ! -d "$folder_path" ]; then
-        echo "Error: Collection folder does not exist: $folder_path"
+        log_error "Collection folder does not exist: $folder_path"
         return 1
     fi
     
@@ -187,13 +238,13 @@ calculate_file_hashes() {
     
     # Verify hash file was created
     if [ ! -f "$hash_file" ]; then
-        echo "Error: Failed to create hash file: $hash_file"
+        log_error "Failed to create hash file: $hash_file"
         return 1
     fi
     
     # Count files before processing
     local file_count=$(find "$folder_path" -type f ! -name "file_hashes.txt" | wc -l)
-    echo "Found $file_count files to process..."
+    log_info "Found $file_count files to process..."
     
     # Determine which hash tool to use and set command
     local hash_cmd=""
@@ -218,7 +269,7 @@ calculate_file_hashes() {
         note_msg="Note: Using MD5 (SHA256 not available)"
     else
         echo "Error: No hash calculation tool available (sha256sum, shasum, digest, or md5sum)" >> "$hash_file"
-        echo "Error: No hash calculation tool available"
+        log_error "No hash calculation tool available"
         return 1
     fi
     
@@ -229,9 +280,9 @@ calculate_file_hashes() {
     
     # Calculate hashes for all files using the selected tool
     if [ "$log_level" = "warn" ]; then
-        echo "Warning: Using $hash_name algorithm (SHA256 not available)..."
+        log_warn "Using $hash_name algorithm (SHA256 not available)..."
     else
-        echo "Using $hash_name algorithm..."
+        log_info "Using $hash_name algorithm..."
     fi
     
     find "$folder_path" -type f ! -name "file_hashes.txt" -print0 | while IFS= read -r -d '' file; do
@@ -239,13 +290,12 @@ calculate_file_hashes() {
     done >> "$hash_file"
     
     if [ "$log_level" = "warn" ]; then
-        echo "Warning: File hashes calculated using $hash_name (SHA256 not available)"
+        log_warn "File hashes calculated using $hash_name (SHA256 not available)"
     else
-        echo "File hashes calculated using $hash_name"
+        log_info "File hashes calculated using $hash_name"
     fi
     
-    # Force file system sync to ensure data is written
-    sync
+    sleep 2
     
     # Add summary information
     {
@@ -258,109 +308,137 @@ calculate_file_hashes() {
         echo "Calculation completed: $(date)"
     } >> "$hash_file"
     
-    # Final sync to ensure all data is written
-    sync
+
+    sleep 2
     
     # Verify hash file exists and has content
     if [ -f "$hash_file" ] && [ -s "$hash_file" ]; then
-        echo "Hash file size: $(ls -lh "$hash_file" | awk '{print $5}')"
-        echo "DONE." ; echo
+        log_file_operation "Hash Calculation" "$hash_file" "success"
+        log_info "Hash file size: $(ls -lh "$hash_file" | awk '{print $5}')"
         return 0
     else
-        echo "Error: Hash file is missing or empty"
+        log_error "Hash file is missing or empty"
         return 1
     fi
 }
 
-# Get hostname, IP address, and current date-time
-echo ; echo "Obtaining system hostname, IP address, and current date-time"
+# Get system information and current date-time
+echo ; log_info "Obtaining system information and current date-time"
 hostname=$(hostname)
 ip_address=$(ifconfig -a | grep 'inet ' | awk '{print $2}' | head -n 1)
 datetime=$(date +"%Y%m%d_%H%M%S")
 echo
 
 # Create the folder name and directory
-
 folder_name="AIX_${hostname}[${ip_address}]${datetime}"
-echo "Creating folder: $folder_name"
+log_info "Creating folder: $folder_name"
 mkdir -p "$folder_name"
-echo "DONE." ; echo
+echo -e "${GREEN}DONE.${NC}" ; echo
+
+# Initialize log file
+LOG_FILE="$folder_name/execution.log"
+touch "$LOG_FILE"
+log_info "Audit collection started"
+log_info "Folder created: $folder_name"
+log_info "System Information: Hostname=$hostname, IP=$ip_address, Date=$datetime"
 
 # Copy the system files to the folder
-echo "Copying system configuration files..."
+log_info "Copying system configuration files..."
 files_to_copy=(
     /etc/release /etc/os-release /etc/group /etc/passwd /etc/shadow /etc/sudoers
     /etc/security/audit/config /etc/security/login.cfg /etc/security/group
     /etc/security/passwd /etc/security/lastlog /etc/security/user
-    /etc/security/login.cfg /etc/security/passwd_policy /usr/lib/security/passwd_policy
+    /etc/security/passwd_policy /usr/lib/security/passwd_policy
     /etc/security/userattr /etc/pam.conf /etc/hosts.equiv /etc/hosts.rhosts
     /etc/hosts.netrc /etc/syslog.conf /etc/rc.firewall /var/adm/cron/cron.allow
-    /var/adm/cron/cron.deny /etc/at.allow /etc/at.deny
+    /etc/at.allow /etc/at.deny /etc/security/limits /etc/profile
+    /var/adm/cron/cron.deny /var/adm/sulog
 )
-echo "DONE." ; echo
 
-# Get password change details of all users
-echo "Collecting password change status for all users..."
 for file in "${files_to_copy[@]}"; do
     if [ -f "$file" ]; then
-        cp "$file" "$folder_name/" 2>/dev/null
+        # Preserve directory structure
+        dest_dir="$folder_name$(dirname "$file")"
+        mkdir -p "$dest_dir"
+        cp -p "$file" "$dest_dir/" 2>/dev/null
+        log_file_operation "Collected" "$file" "success"
     else
         echo "$file not found" >> "$folder_name/missing_files.txt"
+        log_warn "Missing file: $file (logged to missing_files.txt)"
     fi
 done
-echo "DONE." ; echo
+echo -e "${GREEN}DONE.${NC}" ; echo
 
-echo "Collecting user groups information..."
+log_info "Collecting user groups information..."
 lsgroup ALL > "$folder_name/lsgroup.txt" 2>/dev/null
-echo "DONE." ; echo
+lsuser -f ALL > "$folder_name/lsuser_details.txt" 2>/dev/null
+echo -e "${GREEN}DONE.${NC}" ; echo
 
-echo "Collecting running processes and service status..."
-lsrc -all > "$folder_name/services_status.txt" 2>/dev/null
+log_info "Collecting running processes and service status..."
+lssrc -a > "$folder_name/services_status.txt" 2>/dev/null
 ps -ef > "$folder_name/processes.txt"
-#ls -lR / > "$folder_name/file_hierarchy.txt"
-echo "DONE." ; echo
+echo -e "${GREEN}DONE.${NC}" ; echo
 
-echo "Collecting details of installed programs"
+log_info "Collecting details of installed programs"
+
+# AIX Filesets (lslpp -L) - Machine readable (Colon-separated)
+# Kept as installed_programs.txt for backward compatibility
 lslpp -L > "$folder_name/installed_programs.txt" 2>/dev/null
-echo "DONE." ; echo
+log_file_operation "Collected AIX filesets (machine readable)" "installed_programs.txt" "success"
 
-cat /var/log/messages | grep su > "$folder_name/sulogs.txt" 2>/dev/null || echo "No su logs found" > "$folder_name/sulogs.txt"
-echo "DONE." ; echo
+# AIX Filesets (lslpp -l) - Human readable
+lslpp -l > "$folder_name/installed_programs_detailed.txt" 2>/dev/null
+log_file_operation "Collected AIX filesets (human readable)" "installed_programs_detailed.txt" "success"
 
-echo "Collecting log file hierarchy from /var/log..."
-ls -lR /var/log > "$folder_name/log_directory.txt" 2>/dev/null || echo "No audit logs found" > "$folder_name/log_directory.txt"
-echo "DONE." ; echo
+# RPM Packages (rpm -qa)
+if command -v rpm >/dev/null 2>&1; then
+    rpm -qa > "$folder_name/installed_rpm.txt" 2>/dev/null
+    log_file_operation "Collected RPM packages" "installed_rpm.txt" "success"
+else
+    echo "RPM command not found" > "$folder_name/installed_rpm.txt"
+    log_warn "RPM command not found (logged to installed_rpm.txt)"
+fi
+echo -e "${GREEN}DONE.${NC}" ; echo
 
-echo "Collecting network port details..."
+log_info "Collecting log file hierarchy from /var/adm and /var/log..."
+ls -lR /var/adm /var/log > "$folder_name/log_directory.txt" 2>/dev/null || echo "No audit logs found" > "$folder_name/log_directory.txt"
+echo -e "${GREEN}DONE.${NC}" ; echo
+
+log_info "Collecting network port details..."
 netstat -an > "$folder_name/network_ports.txt" 2>/dev/null || echo "Netstat not available" > "$folder_name/network_ports.txt"
-echo "DONE." ; echo
+echo -e "${GREEN}DONE.${NC}" ; echo
 
-echo "Getting host firewall details"
-ipfw list > "$folder_name/ipfw_list.txt" 2>/dev/null || echo "ipfw not available" > "$folder_name/ipfw_list.txt"
-echo "DONE." ; echo
+log_info "Getting host firewall details"
+if command -v lsfilt >/dev/null 2>&1; then
+    lsfilt -v4 > "$folder_name/ipsec_filter_rules.txt" 2>/dev/null || echo "lsfilt failed" > "$folder_name/ipsec_filter_rules.txt"
+else
+    echo "lsfilt command not found" > "$folder_name/ipsec_filter_rules.txt"
+fi
+echo -e "${GREEN}DONE.${NC}" ; echo
 
-echo "Collecting ping results..."
+log_info "Collecting ping results..."
 ping "$(hostname)" -c 4 > "$folder_name/ping_hostname.txt"
-ping 8.8.8.8 -c 4 > "$folder_name/ping_google.txt"
-echo "DONE." ; echo
-
-echo "Collecting installed programs detail..."
-lslpp -l > "$folder_name/packages.txt" 2>/dev/null || echo "lslpp not available" > "$folder_name/packages.txt"
-echo "DONE." ; echo
+ping 8.8.8.8 -c 4 > "$folder_name/ping_connectivity.txt"
+echo -e "${GREEN}DONE.${NC}" ; echo
 
 # Check NTP sync status
-echo "Collecting NTP sync details..."
+log_info "Collecting NTP sync details..."
 if command -v ntpq &> /dev/null; then
     ntpq -p > "$folder_name/ntp_sync_status.txt"
 else
     echo "NTP sync status check failed: ntpq not available." > "$folder_name/ntp_sync_status.txt"
+    log_warn "ntpq command not found"
 fi
 
-ntpdate -d > "$folder_name/ntpdate.txt" 2>/dev/null || echo "ntpdate not available" > "$folder_name/ntpdate.txt"
-echo "DONE." ; echo
+if command -v ntpdate >/dev/null 2>&1; then
+    ntpdate -d > "$folder_name/ntpdate.txt" 2>&1 || echo "ntpdate failed" >> "$folder_name/ntpdate.txt"
+else
+    echo "ntpdate command not found" > "$folder_name/ntpdate.txt"
+fi
+echo -e "${GREEN}DONE.${NC}" ; echo
 
 # Check cron jobs
-echo "Collecting cron jobs information..."
+log_info "Collecting cron jobs information..."
 {
     echo "Cron jobs for allowed users (/var/adm/cron/cron.allow):"
     if [ -f /var/adm/cron/cron.allow ]; then
@@ -376,16 +454,26 @@ echo "Collecting cron jobs information..."
         echo "No cron.deny file found."
     fi
 
-    echo -e "\nUser-specific cron jobs:"
-    for user in $(cut -d: -f1 /etc/passwd); do
-        echo -e "\nCron jobs for user: $user"
-        crontab -l -u "$user" 2>/dev/null || echo "No crontab for $user"
-    done
+    echo -e "\nUser-specific cron jobs (from /var/spool/cron/crontabs):"
+    if [ -d /var/spool/cron/crontabs ]; then
+        ls -l /var/spool/cron/crontabs
+        echo ""
+        for cronfile in /var/spool/cron/crontabs/*; do
+            if [ -f "$cronfile" ]; then
+                echo "----------------------------------------"
+                echo "Cron file for user: $(basename "$cronfile")"
+                cat "$cronfile"
+                echo ""
+            fi
+        done
+    else
+        echo "No /var/spool/cron/crontabs directory found."
+    fi
 } > "$folder_name/cron_jobs.txt"
-echo "DONE." ; echo
+echo -e "${GREEN}DONE.${NC}" ; echo
 
 # Collect user home directory information
-echo "Collecting user home directory information..."
+log_info "Collecting user home directory information..."
 {
     echo "User Home Directory Information"
     echo "==============================="
@@ -410,7 +498,12 @@ echo "Collecting user home directory information..."
             
             # Get stat information (AIX version)
             echo "Stat information:"
-            stat "$home_dir" 2>/dev/null || echo "[Access denied or stat failed]"
+            # Use timeout if available to prevent hanging on NFS
+            if command -v timeout >/dev/null 2>&1; then
+                timeout 5 istat "$home_dir" 2>/dev/null || timeout 5 stat "$home_dir" 2>/dev/null || echo "[Access denied, stat failed, or timed out]"
+            else
+                istat "$home_dir" 2>/dev/null || stat "$home_dir" 2>/dev/null || echo "[Access denied or stat/istat failed]"
+            fi
         else
             echo "Directory exists: No"
         fi
@@ -418,38 +511,38 @@ echo "Collecting user home directory information..."
         echo
     done < /etc/passwd
 } > "$folder_name/user_home_dir.txt"
-echo "DONE." ; echo
+echo -e "${GREEN}DONE.${NC}" ; echo
 
 # Calculate file hashes before creating tar
 if calculate_file_hashes "$folder_name"; then
-    echo -e "${GREEN}✓ File hash calculation completed successfully${NC}"
+    log_info "File hash calculation completed successfully"
     # Small delay to ensure file system operations are complete
     sleep 1
     # Verify hash file is included in the collection
     if [ -f "$folder_name/file_hashes.txt" ]; then
-        echo -e "${GREEN}✓ Hash file verified in collection folder${NC}"
+        log_info "Hash file verified in collection folder"
     else
-        echo -e "${RED}✗ Warning: Hash file not found in collection folder${NC}"
+        log_warn "Hash file not found in collection folder"
     fi
 else
-    echo -e "${RED}✗ File hash calculation failed${NC}"
+    log_error "File hash calculation failed"
 fi
 echo
 
 # Create tar file
 tar_file="${folder_name}.tar.gz"
-echo "Creating tar file: $tar_file"
+log_info "Creating tar file: $tar_file"
 tar -czvf "$tar_file" "$folder_name" >/dev/null
-echo "DONE."
+echo -e "${GREEN}DONE.${NC}"
 
 # Verify hash file is included in the tar archive
-echo "Verifying hash file inclusion in tar archive..."
+log_info "Verifying hash file inclusion in tar archive..."
 if tar -tzf "$tar_file" | grep -q "file_hashes.txt"; then
-    echo -e "${GREEN}✓ Hash file successfully included in tar archive${NC}"
+    log_info "Hash file successfully included in tar archive"
 else
-    echo -e "${RED}✗ Warning: Hash file not found in tar archive${NC}"
+    log_warn "Hash file not found in tar archive"
 fi
 echo
 
-echo -e "${GREEN}Script execution completed. All files and outputs are saved in ${NC}${BLUE}$tar_file${NC}${GREEN}.${NC}"
+log_info "Script execution completed. All files and outputs are saved in $tar_file."
 echo -e "${CYAN}The tar file (${tar_file}) is ready to be copied to secure storage.${NC}"
